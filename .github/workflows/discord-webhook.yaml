@@ -1,0 +1,22 @@
+name: Send Discord Webhook Notification
+
+on:
+  push:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Discord Webhook Action
+        uses: tsickert/discord-webhook@v6.0.0
+        with:
+          webhook_url: "https://discord.com/api/webhooks/1287146505379250226/lXOonjTCxnrfSfpaTO1bEfao29EIfysUC0mPrB0IvL5kaiWMqz544rgMhHCD6jimRKHR"
+          embed-title: "[[area:${{ github.ref_name }}] New commits](${{ github.event.compare }})"
+          embed-description: "New commits have been pushed to the repository. Click the title to view the changes."
+          embed-color: "16711680"
+          embed-author-name: "${{ github.actor }}"
+          embed-author-icon-url: "https://avatars.githubusercontent.com/${{ github.actor_id }}.png"

@@ -1,0 +1,17 @@
+{
+  "git": {
+    "requireBranch": [ "front-*", "ci-cd" ],
+    "commitMessage": "🚀 Release v${version}"
+  },
+  "hooks": {
+    "before:init": [ "git pull" ],
+    "after:bump": "npx auto-changelog -p"
+  },
+  "github": {
+    "release": true,
+    "publish": true
+  },
+  "npm": {
+    "publish": false
+  }
+}

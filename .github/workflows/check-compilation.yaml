@@ -1,0 +1,36 @@
+name: Running tests
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  check-compilation:
+    runs-on: ubuntu-latest
+    outputs:
+      part: ${{ steps.set-part.outputs.part }}
+
+    steps:
+      - name: Which part to test?
+        id: set-part
+        run: |
+          if [[ "${{ github.head_ref || github.ref_name }}" == front* ]]; then
+            echo "context=./front" >> $GITHUB_ENV
+            npm install next@latest react@latest react-dom@latest
+          elif [[ "${{ github.head_ref || github.ref_name }}" == back* ]]; then
+            echo "context=./back" >> $GITHUB_ENV
+            npm i -g @nestjs/cli
+          else
+            echo "Invalid test branch, stop."
+            exit 1
+          fi
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build project
+        run: |
+          cd ${{ env.context }}
+          npm install --legacy-peer-deps
+          npm run build
+

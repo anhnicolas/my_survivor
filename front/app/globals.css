@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.tip-item {
+  margin-bottom: 20px; /* Sépare chaque conseil avec un espace */
+}
+
+.tip-container {
+  border: 1px solid #ccc; /* Ajoute une bordure autour du conteneur */
+  padding: 10px; /* Ajoute un peu de padding à l'intérieur du conteneur */
+  border-radius: 5px; /* Ajoute des coins arrondis à la bordure */
+  background-color: #f9f9f9; /* Ajoute une couleur de fond légère */
+}
+
+.tip-title {
+  font-weight: bold;
+}
+
+.tip-description {
+  margin-left: 20px; /* Ajoute une tabulation pour l'indentation */
+}
+
+#logout-div:hover > svg {
+  fill: white;
+}

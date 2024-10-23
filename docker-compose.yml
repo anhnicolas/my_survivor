@@ -1,0 +1,17 @@
+version: "3.8"
+name: "epitech"
+
+services:
+  survivor-back:
+    image: ghcr.io/epitechpromo2027/b-svr-500-lil-5-1-survivor-jules.weishaus:back-latest
+    container_name: epitech_survivor-back
+    env_file: ./back/.env
+    network_mode: "host"
+    restart: on-failure
+
+  survivor-front:
+    image: ghcr.io/epitechpromo2027/b-svr-500-lil-5-1-survivor-jules.weishaus:front-latest
+    container_name: epitech_survivor-front
+    env_file: ./front/.env
+    network_mode: "host"
+    restart: on-failure

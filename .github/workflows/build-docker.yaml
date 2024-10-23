@@ -1,0 +1,63 @@
+name: Build Docker Image
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      build:
+        required: true
+        description: 'Which project to build'
+
+jobs:
+  which-build:
+    runs-on: ubuntu-latest
+    outputs:
+      part: ${{ steps.set-part.outputs.part }}
+
+    steps:
+      - name: Which part to build?
+        id: set-part
+        run: |
+          if [[ "${{ github.head_ref || github.event.inputs.build }}" == front* ]]; then
+            echo "part=front" >> $GITHUB_ENV
+            echo "context=./front" >> $GITHUB_ENV
+            echo "dockerfile=./front/Dockerfile" >> $GITHUB_ENV
+          elif [[ "${{ github.head_ref || github.event.inputs.build }}" == back* ]]; then
+            echo "part=back" >> $GITHUB_ENV
+            echo "context=./back" >> $GITHUB_ENV
+            echo "dockerfile=./back/Dockerfile" >> $GITHUB_ENV
+          else
+            echo "Invalid build branch, stop."
+            exit 1
+          fi
+
+      - name: Prepare Repository Info
+        run: |
+          REPONAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "REPONAME=${REPONAME}" >> $GITHUB_ENV
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.context }}
+          file: ${{ env.dockerfile}}
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/${{ env.REPONAME }}:${{ env.part }}-latest,ghcr.io/${{ env.REPONAME }}:${{ github.ref_name }}
